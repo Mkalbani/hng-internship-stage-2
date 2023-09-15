@@ -2,3 +2,4 @@ flask
 gunicorn==19.7.1
 pytest
 pymongo
+Flask-PyMongo
