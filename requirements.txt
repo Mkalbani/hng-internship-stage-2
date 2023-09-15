@@ -1,2 +1,4 @@
 flask
-gunicorn
+gunicorn==19.7.1
+pytest
+pymongo
