@@ -15,5 +15,4 @@ pymongo==4.5.0
 Pympler==1.0.1
 python-dateutil==2.8.2
 python-decouple==3.8
-python-dotenv==1.0.0
 
