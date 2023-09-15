@@ -1,9 +1,8 @@
 # Import necessary modules
 from flask import Flask, request, jsonify
-from flask_pymongo import PyMongo
 from pymongo import MongoClient
 from decouple import config  # Import config from decouple
-from pymongo.errors import ServerSelectionTimeoutError
+from bson import ObjectId  # Import ObjectId from pymongo
 
 # Create a Flask app instance
 app = Flask(__name__)
@@ -18,22 +17,23 @@ users_collection = db.users
 # Create a user resource
 @app.route('/api', methods=['POST'])
 def create_user():
-    # Extract JSON data from the request
-    data = request.json
+    if request.method == 'POST':
+        # Extract JSON data from the request
+        data = request.get_json()
 
-    # Check if the "name" field exists in the request data
-    if "name" not in data:
-        return jsonify({"message": "Name is required"}), 400
+        # Check if the "name" field exists in the request data
+        if "name" not in data:
+            return jsonify({"message": "Name is required"}), 400
 
-    # Assign the name from the request data
-    name = data["name"]
+        # Assign the name from the request data
+        name = data["name"]
 
-    # Create a new user object with an incremental _id
-    user_id = users_collection.insert_one({"name": name}).inserted_id
-    new_user = {"_id": user_id, "name": name}
+        # Create a new user object with an incremental _id
+        user_id = users_collection.insert_one({"name": name}).inserted_id
+        new_user = {"_id": user_id, "name": name}
 
-    # Return a success response with a 201 status code
-    return jsonify({"message": "User created successfully", "user": new_user}), 201
+        # Return a success response with a 201 status code
+        return jsonify({"message": "User created successfully", "user": new_user}), 201
 
 # Get all users
 @app.route('/api', methods=['GET'])
@@ -58,8 +58,8 @@ def get_user(user_id):
     if not user:
         return jsonify({"message": "User not found"}), 404
 
-    # Return the user data as a JSON response
-    return jsonify(user)
+    # Return the user data as a JSON response with a 200 status code
+    return jsonify({"user": user}), 200
 
 # Update a user by user_id
 @app.route('/api/<string:user_id>', methods=['PUT'])
