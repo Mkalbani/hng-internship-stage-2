@@ -7,9 +7,6 @@ certifi==2023.5.7
 charset-normalizer==3.2.0
 click==8.1.4
 distlib==0.3.6
-Django==4.2.3
-django-tinymce==3.6.1
-django-tinymce4-lite==1.8.0
 dnspython==2.4.2
 filelock==3.12.2
 Flask==2.3.2
@@ -33,7 +30,6 @@ ml-dtypes==0.2.0
 numpy==1.25.2
 opt-einsum==3.3.0
 packaging==23.1
-pandas==1.2.5
 Pillow==9.5.0
 pipenv==2023.7.11
 platformdirs==3.8.1
