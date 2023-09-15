@@ -16,7 +16,7 @@ db = client.get_database('users')
 users_collection = db.users
 
 # Create a user resource
-@app.route('/api/users', methods=['POST'])
+@app.route('/api', methods=['POST'])
 def create_user():
     # Extract JSON data from the request
     data = request.json
@@ -36,7 +36,7 @@ def create_user():
     return jsonify({"message": "User created successfully", "user": new_user}), 201
 
 # Get all users
-@app.route('/api/users', methods=['GET'])
+@app.route('/api', methods=['GET'])
 def get_all_users():
     # Retrieve all users from the MongoDB collection
     users = list(users_collection.find())
@@ -49,7 +49,7 @@ def get_all_users():
     return jsonify(users)
 
 # Get a user by user_id
-@app.route('/api/users/<string:user_id>', methods=['GET'])
+@app.route('/api/<string:user_id>', methods=['GET'])
 def get_user(user_id):
     # Find a user in the MongoDB collection by user_id
     user = users_collection.find_one({"_id": user_id})
@@ -62,7 +62,7 @@ def get_user(user_id):
     return jsonify(user)
 
 # Update a user by user_id
-@app.route('/api/users/<string:user_id>', methods=['PUT'])
+@app.route('/api/<string:user_id>', methods=['PUT'])
 def update_user(user_id):
     # Extract JSON data from the request
     data = request.json
@@ -78,7 +78,7 @@ def update_user(user_id):
     return jsonify({"message": "User updated successfully"})
 
 # Delete a user by user_id
-@app.route('/api/users/<string:user_id>', methods=['DELETE'])
+@app.route('/api/<string:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     # Delete a user from the MongoDB collection by user_id
     result = users_collection.delete_one({"_id": user_id})
