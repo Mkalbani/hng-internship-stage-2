@@ -8,8 +8,7 @@ from pymongo.errors import ServerSelectionTimeoutError
 # Create a Flask app instance
 app = Flask(__name__)
 # Configure Flask-PyMongo with the MongoDB URI
-# app.config["SECRET_KEY"] = 'b4ece8a4631d856a7581da4a8e59eb5631f7647e'
-app.config["MONGO_URI"] = "mongodb+srv://user:test234@cluster0.5amxkrp.mongodb.net/?retryWrites=true&w=majority"
+app.config["MONGO_URI"] = URI
 client = MongoClient(app.config["MONGO_URI"])
 #client = MongoClient(app)
 
