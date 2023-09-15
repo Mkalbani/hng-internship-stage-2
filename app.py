@@ -5,31 +5,38 @@ from pymongo import MongoClient
 from decouple import config  # Import config from decouple
 from pymongo.errors import ServerSelectionTimeoutError
 
-
 # Create a Flask app instance
 app = Flask(__name__)
 # Configure Flask-PyMongo with the MongoDB URI
-# app.config["SECRET_KEY"] = 'b4ece8a4631d856a7581da4a8e59eb5631f7647e'
 app.config["MONGO_URI"] = "mongodb+srv://user:test234@cluster0.5amxkrp.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(app.config["MONGO_URI"])
-#client = MongoClient(app)
 
-#set up mongodb
-# mongodb_client = PyMongo(app)
+# Set up MongoDB
 db = client.get_database('users')
-#db = mongodb_client.db
-
-# Define the MongoDB collection for users
 users_collection = db.users
 
-# Create a user document
-user_data = {
-    "_id": 0,
-    "name": "musa"
-}
+# Create a user resource
+@app.route('/api/users', methods=['POST'])
+def create_user():
+    # Extract JSON data from the request
+    data = request.json
+
+    # Check if the "name" field exists in the request data
+    if "name" not in data:
+        return jsonify({"message": "Name is required"}), 400
+
+    # Assign the name from the request data
+    name = data["name"]
+
+    # Create a new user object with an incremental _id
+    user_id = users_collection.insert_one({"name": name}).inserted_id
+    new_user = {"_id": user_id, "name": name}
+
+    # Return a success response with a 201 status code
+    return jsonify({"message": "User created successfully", "user": new_user}), 201
 
 # Get all users
-@app.route('/users', methods=['GET'])
+@app.route('/api/users', methods=['GET'])
 def get_all_users():
     # Retrieve all users from the MongoDB collection
     users = list(users_collection.find())
@@ -42,7 +49,7 @@ def get_all_users():
     return jsonify(users)
 
 # Get a user by user_id
-@app.route('/users/<string:user_id>', methods=['GET'])
+@app.route('/api/users/<string:user_id>', methods=['GET'])
 def get_user(user_id):
     # Find a user in the MongoDB collection by user_id
     user = users_collection.find_one({"_id": user_id})
@@ -54,34 +61,8 @@ def get_user(user_id):
     # Return the user data as a JSON response
     return jsonify(user)
 
-# Create a user resource
-@app.route('/users', methods=['POST'])
-def create_user():
-    # Extract JSON data from the request
-    data = request.json
-
-    # Check if the "name" field exists in the request data
-    if "name" not in data:
-        return jsonify({"message": "Name is required"}), 400
-
-    # Assign the name from the request data
-    name = data["new_user"]
-
-    # Create a new user object with an incremental _id
-    user_id = len(user_data)
-    new_user = {
-        "_id": user_id,
-        "name": name
-    }
-
-    # Append the new user to the user_data list
-    user_data.append(new_user)
-
-    # Return a success response with a 201 status code
-    return jsonify({"message": "User created successfully", "user": new_user}), 201
-
 # Update a user by user_id
-@app.route('/users/<string:user_id>', methods=['PUT'])
+@app.route('/api/users/<string:user_id>', methods=['PUT'])
 def update_user(user_id):
     # Extract JSON data from the request
     data = request.json
@@ -97,7 +78,7 @@ def update_user(user_id):
     return jsonify({"message": "User updated successfully"})
 
 # Delete a user by user_id
-@app.route('/users/<string:user_id>', methods=['DELETE'])
+@app.route('/api/users/<string:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     # Delete a user from the MongoDB collection by user_id
     result = users_collection.delete_one({"_id": user_id})
