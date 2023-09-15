@@ -53,6 +53,7 @@ def get_all_users():
     return jsonify(users)
 
 
+
 # Get a user by user_id
 @app.route('/api/<string:user_id>', methods=['GET'])
 def get_user(user_id):
