@@ -73,7 +73,7 @@ def create_user():
 @app.route('/api/{user_name}>', methods=['PUT'])
 def update_user_by_name(user_name):
     # Extract JSON data from the request
-    data = request.json
+    data = request.get_json()
     new = users_collection.find_one({"name": user_name})
     if new == None:
         return {"message": "User not found"}, 404
