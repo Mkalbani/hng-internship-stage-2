@@ -14,27 +14,6 @@ client = MongoClient(app.config["MONGO_URI"])
 db = client.get_database('users')
 users_collection = db.users
 
-# Create a user resource
-@app.route('/api', methods=['POST'])
-def create_user():
-    # Extract JSON data from the request
-    data = request.json
-
-    # Check if the "name" field exists in the request data
-    if "name" not in data:
-        return jsonify({"message": "Name is required"}), 400
-
-    # Assign the name from the request data
-    name = data["name"]
-
-    # Create a new user object with an incremental _id and predefined ID
-    user_id = users_collection.insert_one({"name": name, "_id": 1}).inserted_id
-    new_user = {"_id": user_id, "name": name}
-
-    # Return a success response with a 201 status code
-    return jsonify({"message": "User created successfully", "user": new_user}), 201
-
-# Get all users
 # Get all users
 @app.route('/api', methods=['GET'])
 def get_all_users():
@@ -52,8 +31,6 @@ def get_all_users():
     # Return the list of users as a JSON response
     return jsonify(users)
 
-
-
 # Get a user by user_id
 @app.route('/api/<string:user_id>', methods=['GET'])
 def get_user(user_id):
@@ -66,6 +43,30 @@ def get_user(user_id):
 
     # Return the user data as a JSON response
     return jsonify(user)
+
+# Create a user resource
+@app.route('/api', methods=['POST'])
+def create_user():
+    try:
+        # Get the user name from the request JSON data
+        user_data = request.get_json()
+        
+        # Check if the required "name" field is present in the request data
+        if 'name' in user_data:
+            name = user_data['name']
+            
+            # Generate a unique ID for the user
+            user_id = str(ObjectId())
+
+            # Insert the user data into the MongoDB collection
+            user = {"_id": user_id, "name": name}
+            users_collection.insert_one(user)
+
+            return jsonify({'message': 'User added successfully', '_id': user_id}), 201
+        else:
+            return jsonify({'error': 'Name is required in the request data'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # Update a user by user_id
 @app.route('/api/<string:user_id>', methods=['PUT'])
