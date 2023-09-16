@@ -56,7 +56,7 @@ def create_user():
             name = user_data['name']
             
             # Generate a unique ID for the user
-            user_id = 1
+            user_id = users_collection.count_documents({}) + 1
             # user_id = str(ObjectId())
 
             # Insert the user data into the MongoDB collection
