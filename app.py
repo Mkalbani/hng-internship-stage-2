@@ -70,7 +70,7 @@ def create_user():
         return jsonify({'error': str(e)}), 500
 
 # Update a user by name
-@app.route('/api/user/{user_name}>', methods=['PUT'])
+@app.route('/api/{user_name}>', methods=['PUT'])
 def update_user_by_name(user_name):
     # Extract JSON data from the request
     data = request.json
@@ -86,7 +86,7 @@ def update_user_by_name(user_name):
     return jsonify({"message": "User updated successfully"})
 
 # Delete a user by name
-@app.route('/api/user/{user_name}', methods=['DELETE'])
+@app.route('/api/{user_name}', methods=['DELETE'])
 def delete_user_by_name(user_name):
     # Find a user in the MongoDB collection by name
     user = users_collection.find_one({"name": user_name})
