@@ -26,7 +26,7 @@ def get_all_users():
 
     # Convert ObjectId values to strings
     for user in users:
-        user["user_id"] = str(user["_id"])
+        user["_id"] = str(user["_id"])
 
     # Return the list of users as a JSON response
     return jsonify(users)
@@ -104,11 +104,20 @@ def update_user(user_id):
 # Delete a user by name
 @app.route('/api/<string:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    result = users_collection.delete_one({"user_id": user_id})
+    # Check if a user with the specified user_id exists in the database
+    existing_user = users_collection.find_one({"_id": user_id})
+
+    if existing_user is None:
+        return {"message": "User not found"}, 404
+
+    # Delete the user from the MongoDB collection
+    result = users_collection.delete_one({"_id": user_id})
+
     if result.deleted_count == 0:
         return {"message": "User not found"}, 404
     else:
         return jsonify({"message": "User deleted successfully"}), 204
+
 
 # Delete a user by user_id
 # @app.route('/api/<string:user_id>', methods=['DELETE'])
