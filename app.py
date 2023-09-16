@@ -26,7 +26,7 @@ def get_all_users():
 
     # Convert ObjectId values to strings
     for user in users:
-        user["_id"] = str(user["_id"])
+        user["user_id"] = str(user["_id"])
 
     # Return the list of users as a JSON response
     return jsonify(users)
@@ -63,7 +63,7 @@ def create_user():
             user = {"_id": user_id, "name": name}
             users_collection.insert_one(user)
 
-            return jsonify({'message': 'User added successfully', '_id': user_id}), 201
+            return jsonify({'message': 'User added successfully', 'user_id': user_id}), 201
         else:
             return jsonify({'error': 'Name is required in the request data'}), 400
     except Exception as e:
@@ -74,16 +74,19 @@ def create_user():
 def update_user(user_id):
     # Extract JSON data from the request
     data = request.get_json()
-    new = users_collection.find_one({"_id": user_id})
-    if new == None:
-        return {"message": "User not found"}, 404
-    updated_data = {"$set": data}
-    result = users_collection.update_one({"_id": user_id}, updated_data)
-    if result.modified_count == 0:
-        return {"message": "User found, but nothing updated"}, 200
+    existing_user = users_collection.find_one({"user_id": user_id})
+    if existing_user is None:
+        # Create a new user if not found
+        users_collection.insert_one({"_id": user_id, **data})
+        return {"message": "User created"}, 201
     else:
-        return jsonify(new), 201
-
+        # Update the existing user
+        updated_data = {"$set": data}
+        result = users_collection.update_one({"user_id": user_id}, updated_data)
+        if result.modified_count == 0:
+            return {"message": "User found, but nothing updated"}, 200
+        else:
+            return {"message": "User updated"}, 200
 # @app.route('/api/<string:user_id>', methods=['PUT'])
 # def update_user(user_id):
 #     # Extract JSON data from the request
@@ -101,7 +104,7 @@ def update_user(user_id):
 # Delete a user by name
 @app.route('/api/<string:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    result = users_collection.delete_one({"_id": user_id})
+    result = users_collection.delete_one({"user_id": user_id})
     if result.deleted_count == 0:
         return {"message": "User not found"}, 404
     else:
