@@ -74,20 +74,36 @@ def create_user():
 def update_user_by_name(user_name):
     # Extract JSON data from the request
     data = request.json
-
-    # Update the user in the MongoDB collection by name
-    result = users_collection.update_one({"name": user_name}, {"$set": data})
-
-    # If no user was updated, return a 404 error response
+    new = users_collection.find_one({"name": user_name})
+    if new == None:
+        return {"message": "User not found"}, 404
+    updated_data = {"$set": data}
+    result = users_collection.update_one({"name": user_name}, updated_data)
     if result.modified_count == 0:
-        return jsonify({"message": "User not found"}), 404
+        return {"message": "User found, but nothing updated"}, 200
+    else:
+        return parse_json(users_collection.find_one({"name": user_name})), 201
 
-    # Return a success response
-    return jsonify({"message": "User updated successfully"})
+    # # Update the user in the MongoDB collection by name
+    # result = users_collection.update_one({"name": user_name}, {"$set": data})
+
+    # # If no user was updated, return a 404 error response
+    # if result.modified_count == 0:
+    #     return jsonify({"message": "User not found"}), 404
+
+    # # Return a success response
+    # return jsonify({"message": "User updated successfully"})
 
 # Delete a user by name
 @app.route('/api/{user_name}', methods=['DELETE'])
 def delete_user_by_name(user_name):
+    result = users_collection.delete_one({"name": user_name})
+    if result.deleted_count == 0:
+        return {"message": "User not found"}, 404
+    else:
+        return jsonify({"message": "User deleted successfully"}), 204
+
+
     # Find a user in the MongoDB collection by name
     user = users_collection.find_one({"name": user_name})
 
