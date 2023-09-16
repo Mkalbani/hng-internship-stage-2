@@ -56,7 +56,8 @@ def create_user():
             name = user_data['name']
             
             # Generate a unique ID for the user
-            user_id = str(ObjectId())
+            user_id = 1
+            # user_id = str(ObjectId())
 
             # Insert the user data into the MongoDB collection
             user = {"_id": user_id, "name": name}
