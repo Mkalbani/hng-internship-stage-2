@@ -1,3 +1,5 @@
+![Alt Text](https://github.com/Mkothm/hng-internship-stage-2/blob/main/chatuml-diagram.svg)
+
 # Flask CRUD App
 
 This is a simple Flask web application that demonstrates CRUD (Create, Read, Update, Delete) operations using a MongoDB database. The app allows you to manage user records, including their names.
