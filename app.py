@@ -75,21 +75,13 @@ def update_user(user_id):
     # Extract JSON data from the request
     data = request.get_json()
 
-    # Check if the user with the specified user_id exists in the database
-    existing_user = users_collection.find_one({"_id": user_id})
-
-    if existing_user is None:
-        # Create a new user if not found
-        users_collection.insert_one({"_id": user_id, **data})
-        return {"message": "User created"}, 201
+    # Update the existing user
+    updated_data = {"$set": data}
+    result = users_collection.update_one({"_id": user_id}, updated_data)
+    if result.modified_count == 0:
+        return {"message": "User found, but nothing updated"}, 200
     else:
-        # Update the existing user
-        updated_data = {"$set": data}
-        result = users_collection.update_one({"_id": user_id}, updated_data)
-        if result.modified_count == 0:
-            return {"message": "User found, but nothing updated"}, 200
-        else:
-            return {"message": "User updated"}, 200
+        return {"message": "User updated"}, 200
 
 # @app.route('/api/<string:user_id>', methods=['PUT'])
 # def update_user(user_id):
@@ -106,9 +98,9 @@ def update_user(user_id):
 #     # Return a success response
 #     return jsonify({"message": "User updated successfully"})
 # Delete a user by name
-@app.route('/api/<string:user_id>', methods=['DELETE'])
+@app.route('/api/<string:username>', methods=['DELETE'])
 def delete_user(user_id):
-    result = users_collection.delete_one({"_id": user_id})
+    result = users_collection.delete_one({"name": username})
 
     if result.deleted_count == 0:
         return {"message": "User not found"}, 404
