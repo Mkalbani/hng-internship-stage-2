@@ -108,7 +108,6 @@ def update_user(user_id):
 # Delete a user by name
 @app.route('/api/<string:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    data = request.json
     result = users_collection.delete_one({"_id": user_id})
 
     if result.deleted_count == 0:
