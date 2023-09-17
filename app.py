@@ -99,7 +99,7 @@ def update_user(user_id):
 #     return jsonify({"message": "User updated successfully"})
 # Delete a user by name
 @app.route('/api/<string:username>', methods=['DELETE'])
-def delete_user(user_id):
+def delete_user(username):
     result = users_collection.delete_one({"name": username})
 
     if result.deleted_count == 0:
