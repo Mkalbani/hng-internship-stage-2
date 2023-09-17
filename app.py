@@ -73,7 +73,7 @@ def create_user():
 @app.route('/api/<string:user_id>', methods=['PUT'])
 def update_user(user_id):
     # Extract JSON data from the request
-    data = request.json
+    data = request.get_json()
 
     # Check if the user with the specified user_id exists in the database
     existing_user = users_collection.find_one({"_id": user_id})
@@ -108,7 +108,7 @@ def update_user(user_id):
 # Delete a user by name
 @app.route('/api/<string:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    result = request.json
+    data = request.json
     result = users_collection.delete_one({"_id": user_id})
 
     if result.deleted_count == 0:
