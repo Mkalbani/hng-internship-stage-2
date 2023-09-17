@@ -1,4 +1,5 @@
 # Import config from decouple
+from platformdirs import user_data_dir
 from pymongo.errors import ServerSelectionTimeoutError
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
@@ -32,7 +33,7 @@ def get_all_users():
     return jsonify(users)
 
 # Get a user by user_id
-@app.route('/api/<string:user_id>', methods=['GET'])
+@app.route('/api/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     # Find a user in the MongoDB collection by user_id
     user = users_collection.find_one({"_id": user_id})
@@ -70,12 +71,11 @@ def create_user():
         return jsonify({'error': str(e)}), 500
 
 # Update a user by user_id
-@app.route('/api/<string:user_id>', methods=['PUT'])
+@app.route('/api/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
     # Extract JSON data from the request
-    url = "https://hng-task-two-mng0.onrender.com/api/<string:user_id>"
-    uod = request.get_json
-    data = request.put(url, json=uod)
+    
+    data = request.get_json()
 
     # Update the existing user
     updated_data = {"$set": data}
@@ -100,10 +100,9 @@ def update_user(user_id):
 #     # Return a success response
 #     return jsonify({"message": "User updated successfully"})
 # Delete a user by name
-@app.route('/api/username', methods=['DELETE'])
-def delete_user():
-    name = request.get_json()
-    result = users_collection.delete_one({"name": name})
+@app.route('/api/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    result = users_collection.delete_one({"_id": user_id})
 
     if result.deleted_count == 0:
         return {"message": "User not found"}, 404
