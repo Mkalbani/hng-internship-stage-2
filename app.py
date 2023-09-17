@@ -112,8 +112,7 @@ def delete_user(user_id):
 
     if result.deleted_count == 0:
         return {"message": "User not found"}, 404
-    else:
-        return jsonify({"message": "User deleted successfully"}), 204
+    return jsonify({"message": "User deleted successfully"}), 204
 
 
 # Delete a user by user_id
