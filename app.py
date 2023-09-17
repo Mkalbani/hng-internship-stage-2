@@ -71,7 +71,7 @@ def create_user():
         return jsonify({'error': str(e)}), 500
 
 # Update a user by user_id
-@app.route('/api/<int:user_id>', methods=['PUT'])
+@app.route('/api/<string:user_id>', methods=['PUT'])
 def update_user(user_id):
     # Extract JSON data from the request
     
