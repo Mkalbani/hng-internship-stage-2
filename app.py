@@ -73,7 +73,9 @@ def create_user():
 @app.route('/api/<string:user_id>', methods=['PUT'])
 def update_user(user_id):
     # Extract JSON data from the request
-    data = request.get_json()
+    url = "https://hng-task-two-mng0.onrender.com/api/<string:user_id>"
+    uod = request.get_json
+    data = request.put(url, json=uod)
 
     # Update the existing user
     updated_data = {"$set": data}
@@ -98,9 +100,10 @@ def update_user(user_id):
 #     # Return a success response
 #     return jsonify({"message": "User updated successfully"})
 # Delete a user by name
-@app.route('/api/<string:username>', methods=['DELETE'])
-def delete_user(username):
-    result = users_collection.delete_one({"name": username})
+@app.route('/api/username', methods=['DELETE'])
+def delete_user():
+    name = request.get_json()
+    result = users_collection.delete_one({"name": name})
 
     if result.deleted_count == 0:
         return {"message": "User not found"}, 404
